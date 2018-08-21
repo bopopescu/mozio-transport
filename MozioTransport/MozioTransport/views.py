@@ -1,13 +1,11 @@
-
-from rest_framework.decorators import api_view # new
-from rest_framework.response import Response # new
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 
 
 
 @api_view(['GET']) # new
-def api_root(request, format=None):
-    return Response({
-
-    })
+def api_root(request):
+    return Response(status=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
 from django.urls import reverse
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 
@@ -6,8 +7,8 @@ from provider.models import Provider
 from .models import Area
 from .serializers import AreaSerializer
 
-# Create your tests here.
-class BaseViewTest(APITestCase):
+
+class BaseAreaTest(APITestCase):
     client = APIClient()
 
     @staticmethod
@@ -19,14 +20,12 @@ class BaseViewTest(APITestCase):
     def setUp(self):
         p1 = Provider.objects.get(pk=1)
         p2 = Provider.objects.get(pk=2)
-        self.create_area("Area1", 15200, p1, 50.0, 30.0, [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]])
-        self.create_area("Area2", 9000, p2, 21.0, 17.56, [[18.69, 12.36], [12.05, 29.78], [18.69, 12.36]])
-        self.create_area("Area3", 20000, p1, 50.0, 30.0, [[80.69, 58.58], [23.87, 62.39], [80.69, 58.58]])
+        self.create_area("Area1", 15200, p1.pk, 50.0, 30.0, [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]])
+        self.create_area("Area2", 9000, p2.pk, 21.0, 17.56, [[18.69, 12.36], [12.05, 29.78], [18.69, 12.36]])
+        self.create_area("Area3", 20000, p1.pk, 50.0, 30.0, [[80.69, 58.58], [23.87, 62.39], [80.69, 58.58]])
 
 
-
-
-class AreaTest(BaseViewTest):
+class AreaTest(BaseAreaTest):
 
     def test_getting_all_areas(self):
         response = self.client.get(reverse('areas-list'))

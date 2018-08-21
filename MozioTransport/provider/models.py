@@ -1,6 +1,4 @@
 from django.db import models
-
-# Create your models here.
 from django.core.validators import RegexValidator
 from djmoney.models.fields import MoneyField
 from languages.fields import LanguageField

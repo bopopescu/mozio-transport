@@ -1,19 +1,23 @@
-from django.test import TestCase
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from django.http import Http404
+
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
-from .models import Provider
-from .serializers import ProviderSerializer
 
-# Create your tests here.
-class BaseViewTest(APITestCase):
+from .serializers import ProviderSerializer
+from .models import Provider
+
+
+
+class BaseProviderTest(APITestCase):
     client = APIClient()
 
     @staticmethod
     def create_provider(name="", email="", phone_number="", language="", currency=""):
         if name != "" and email != "":
-            Provider.objects.create(name=name, email=email,
-                                    phone_number=phone_number, language=language, currency=currency)
+            Provider.objects.create(name=name, email=email, phone_number=phone_number,
+                                    language=language, currency=currency)
 
     def setUp(self):
         self.create_provider("Mozio1", "admin@mozio.com", "+999999999", "en", "2000.2")
@@ -21,7 +25,7 @@ class BaseViewTest(APITestCase):
 
 
 
-class ProviderTest(BaseViewTest):
+class ProviderTest(BaseProviderTest):
 
     def test_getting_all_providers(self):
         response = self.client.get(reverse('providers-list'))
@@ -33,10 +37,9 @@ class ProviderTest(BaseViewTest):
     def test_creating_provider(self):
         self.assertEqual(Provider.objects.count(), 2)
 
-    def test_get_single_provider(self):
-        response = self.client.get(
-            reverse('providers-detail', kwargs={'pk': 2}))
-        expected = Provider.objects.get(pk=2)
+    def test_get_single_provider(self, *args, **kwargs):
+        response = self.client.get(reverse('providers-detail', kwargs={'pk': 1}))
+        expected = Provider.objects.get(pk=1)
         serializer = ProviderSerializer(expected)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -49,7 +52,8 @@ class ProviderTest(BaseViewTest):
             'language' : 'en',
             'currency' : 2000.2
         }, format="json")
-        expected = Provider.objects.get(pk=1)
+        expected = get_object_or_404(Provider, pk=1)
+        # expected = Provider.objects.get(pk=1)
         serializer = ProviderSerializer(expected)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

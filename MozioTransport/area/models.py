@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 class Area(models.Model):
     name = models.CharField(max_length=250)
     price = models.IntegerField()
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE,)
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, null=True)
 
     coordinate_regex = RegexValidator(regex=r'^\d+\.\d+$',
                                  message="Please enter a decimal number.")

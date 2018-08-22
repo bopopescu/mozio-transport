@@ -1,9 +1,10 @@
-from django.shortcuts import render
+"""Provider view using Django Rest Framework generics
+in order to have fast built in CRUD operation and generate response in JSON
+"""
+from rest_framework import generics
 
-# Create your views here.
 from .models import Provider
 from .serializers import ProviderSerializer
-from rest_framework import generics
 
 
 class ProviderList(generics.ListCreateAPIView):

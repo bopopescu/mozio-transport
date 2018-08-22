@@ -1,3 +1,13 @@
+"""Area test Class
+This class contains area tests driven cases to :
+    - get all areas
+    - create new area
+    - get single area
+    - update area
+    - delete area
+    - get invalid area
+"""
+
 from django.urls import reverse
 
 from rest_framework.test import APITestCase, APIClient
@@ -12,17 +22,23 @@ class BaseAreaTest(APITestCase):
     client = APIClient()
 
     @staticmethod
-    def create_area(name="", price=0, provider=0, longitude=0.0, latitude=0.0, poly=[]):
+    def create_area(name="", price=0, provider=0, poly=[]):
         if name != "" and price != 0:
-            Area.objects.create(name=name, price=price, provider=provider, longitude=longitude,
-                                latitude=latitude, poly=poly)
+            Area.objects.create(name=name, price=price, provider=provider, poly=poly)
+
+    def create_provider(name="", email="", phone_number="", language="", currency=""):
+        if name != "" and email != "":
+            Provider.objects.create(name=name, email=email, phone_number=phone_number,
+                                    language=language, currency=currency)
 
     def setUp(self):
+        self.create_provider("Mozio1", "admin@mozio.com", "+999999999", "en", "2000.2")
+        self.create_provider("Mozio2", "admin2@mozio.com", "+123456789", "en", "5000.6")
         p1 = Provider.objects.get(pk=1)
         p2 = Provider.objects.get(pk=2)
-        self.create_area("Area1", 15200, p1.pk, 50.0, 30.0, [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]])
-        self.create_area("Area2", 9000, p2.pk, 21.0, 17.56, [[18.69, 12.36], [12.05, 29.78], [18.69, 12.36]])
-        self.create_area("Area3", 20000, p1.pk, 50.0, 30.0, [[80.69, 58.58], [23.87, 62.39], [80.69, 58.58]])
+        self.create_area("Area1", 15200, p1.pk, [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]])
+        self.create_area("Area2", 9000, p2.pk, [[18.69, 12.36], [12.05, 29.78], [18.69, 12.36]])
+        self.create_area("Area3", 20000, p1.pk, [[80.69, 58.58], [23.87, 62.39], [80.69, 58.58]])
 
 
 class AreaTest(BaseAreaTest):
@@ -50,9 +66,7 @@ class AreaTest(BaseAreaTest):
             'name': 'Area111',
             'price': 15200,
             'provider': 2,
-            'longitude' : 50.0,
-            'latitude' : 30.0,
-            'poly' : [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]]
+            'poly': [[12.41, 43.95], [12.45, 43.97], [12.41, 43.95]]
         }, format="json")
         expected = Area.objects.get(pk=1)
         serializer = AreaSerializer(expected)

@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework_cache.registry import cache_registry
+
 from MozioTransport import views
+
 
 urlpatterns = [
     path('', views.api_root),
@@ -24,3 +27,5 @@ urlpatterns = [
     path('providers/', include('provider.urls')),
     path('areas/', include('area.urls')),
 ]
+
+cache_registry.autodiscover()

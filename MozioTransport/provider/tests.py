@@ -1,6 +1,13 @@
+"""Provider test Class
+This class contains provider tests driven cases to :
+    - get all providers
+    - create new provider
+    - get single provider
+    - update provider
+    - delete provider
+    - get invalid provider
+"""
 from django.urls import reverse
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
@@ -9,7 +16,7 @@ from .serializers import ProviderSerializer
 from .models import Provider
 
 
-
+# Base class to init test case
 class BaseProviderTest(APITestCase):
     client = APIClient()
 
@@ -24,9 +31,8 @@ class BaseProviderTest(APITestCase):
         self.create_provider("Mozio2", "admin2@mozio.com", "+123456789", "en", "5000.6")
 
 
-
+# Provider test class to drive test cases
 class ProviderTest(BaseProviderTest):
-
     def test_getting_all_providers(self):
         response = self.client.get(reverse('providers-list'))
         expected = Provider.objects.all()
@@ -37,7 +43,7 @@ class ProviderTest(BaseProviderTest):
     def test_creating_provider(self):
         self.assertEqual(Provider.objects.count(), 2)
 
-    def test_get_single_provider(self, *args, **kwargs):
+    def test_get_single_provider(self):
         response = self.client.get(reverse('providers-detail', kwargs={'pk': 1}))
         expected = Provider.objects.get(pk=1)
         serializer = ProviderSerializer(expected)
@@ -49,11 +55,10 @@ class ProviderTest(BaseProviderTest):
             'name': 'Mozio1111',
             'email': 'admin1111@mozio.com',
             'phone_number': '+999999999',
-            'language' : 'en',
-            'currency' : 2000.2
+            'language': 'en',
+            'currency': 2000.2
         }, format="json")
-        expected = get_object_or_404(Provider, pk=1)
-        # expected = Provider.objects.get(pk=1)
+        expected = Provider.objects.get(pk=1)
         serializer = ProviderSerializer(expected)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,6 +68,5 @@ class ProviderTest(BaseProviderTest):
         self.assertEqual(204, response.status_code)
 
     def test_get_invalid_provider(self):
-        response = self.client.get(
-            reverse('providers-detail', kwargs={'pk': 30}))
+        response = self.client.get(reverse('providers-detail', kwargs={'pk': 30}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
